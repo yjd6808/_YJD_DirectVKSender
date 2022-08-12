@@ -18,6 +18,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
@@ -148,7 +149,14 @@ namespace DirectVKSender
                 return;
             }
 
-            ProcessHijacker.InjectDLL(_selectedWndProcess.Id);
+            try
+            {
+                ProcessHijacker.InjectDLL(_selectedWndProcess.Id);
+            }
+            catch (Exception exception)
+            {
+                MsgBox.ShowTopMost(exception.Message);
+            }
         }
 
         private void _postMessageBtn_Click(object sender, RoutedEventArgs e)
@@ -165,12 +173,34 @@ namespace DirectVKSender
                 return;
             }
 
-            ProcessHijacker.EjectDLL(_selectedWndProcess.Id);
+            try
+            {
+                ProcessHijacker.EjectDLL(_selectedWndProcess.Id);
+            }
+            catch (Exception exception)
+            {
+                MsgBox.ShowTopMost(exception.Message);
+            }
         }
 
         private void _saveLogBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (_selectedWndProcess == null)
+            {
+                MsgBox.ShowTopMost("프로세스를 먼저 선택해주세요.");
+                return;
+            }
 
+            if (!_selectedWndProcess.IsRunning())
+            {
+                MsgBox.ShowTopMost("프로세스가 실행중이지 않습니다. 다시 선택해주세요.");
+                return;
+            }
+
+            if (!_selectedWndProcess.ContainModule("DirectVKSenderDLL.dll"))
+                MsgBox.ShowTopMost("DirectVKSenderDLL.dll 모듈을 포함하고 있지 않습니다.");
+            else
+                MsgBox.ShowTopMost("DirectVKSenderDLL.dll 모듈을 포함하고 있습니다.");
         }
     }
 }

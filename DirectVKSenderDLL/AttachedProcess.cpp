@@ -49,6 +49,6 @@ BOOL AttachedProcess::ExecutePostWndProc(int msgCode, WPARAM wParam, LPARAM lPar
 	if (m_hWnd == NULL)
 		return FALSE;
 
-	Debug::ShowMessageBox(_T("메시지 전송완료"));
+	// Debug::ShowMessageBoxFormat(_T("%x %08x %08x 메시지 전송완료", msgCode, wParam, lParam));
 	return PostMessage(m_hWnd, msgCode, wParam, lParam);
 }

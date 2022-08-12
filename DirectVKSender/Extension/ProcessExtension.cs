@@ -21,5 +21,18 @@ namespace DirectVKSender
 
             return false;
         }
+
+        public static bool ContainModule(this Process process, string moduleName)
+        {
+            foreach (ProcessModule module in process.Modules)
+            {
+                if (module.ModuleName == moduleName)
+                    return true;
+            }
+
+            return false;
+        }
+
+
     }
 }

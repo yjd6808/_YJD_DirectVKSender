@@ -20,13 +20,15 @@ VK_SENDER_EXPORT bool VK_CDECL HelloWorld(const TCHAR* msg)
 
 VK_SENDER_EXPORT bool VK_CDECL InjectDLL(DWORD dwWndProcessId)
 {
+	Debug::ShowMessageBox(_T("_1"));
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwWndProcessId);
 
 	if (hProcess == NULL) {
-		Debug::ShowMessageBox(_T("OpenProcess Failed"));
+		Debug::ShowMessageBox(_T("InjectDLL -> OpenProcess Failed"));
 		return false;
 	}
 
+	Debug::ShowMessageBox(_T("_2"));
 	// DirectVKSender
 	// DirectVKSenderDLLDebugger
 	// 이 2개의 파일가 같은 경로에 모두 DirectVKSenderDLL.dll파일이 존재함.
@@ -35,25 +37,25 @@ VK_SENDER_EXPORT bool VK_CDECL InjectDLL(DWORD dwWndProcessId)
 	VKString strModuleFullPath = std::filesystem::path(WinApiHelper::GetCurrentModuleFileName())
 		.parent_path().append(strModuleFileName);
 
-	Debug::ShowMessageBox(strModuleFullPath);
+	Debug::ShowMessageBox(_T("_3"));
 
 	LPVOID pRemoteBuf = VirtualAllocEx(hProcess, NULL, strModuleFullPath.size() * sizeof(TCHAR) + 1, MEM_COMMIT, PAGE_READWRITE);
 
 	if (pRemoteBuf == NULL) {
-		Debug::ShowMessageBox(_T("VirtualAllocEx Failed"));
+		Debug::ShowMessageBox(_T("InjectDLL -> VirtualAllocEx Failed"));
 		return false;
 	}
 
 	SIZE_T ulWrittenBytesSize = 0;
 	if (WriteProcessMemory(hProcess, pRemoteBuf, strModuleFullPath.data(), strModuleFullPath.size() * sizeof(TCHAR) + 1, &ulWrittenBytesSize) == 0) {
-		Debug::ShowMessageBox(_T("WriteProcessMemory Failed"));
+		Debug::ShowMessageBox(_T("InjectDLL -> WriteProcessMemory Failed"));
 		return false;
 	}
 
 	HMODULE hKernelDLLModule = GetModuleHandle(_T("kernel32.dll"));
 
 	if (hKernelDLLModule == NULL) {
-		Debug::ShowMessageBox(_T("GetModuleHandle Failed"));
+		Debug::ShowMessageBox(_T("InjectDLL -> GetModuleHandle Failed"));
 		return false;
 	}
 
@@ -64,14 +66,14 @@ VK_SENDER_EXPORT bool VK_CDECL InjectDLL(DWORD dwWndProcessId)
 	#endif
 	if (pProc == NULL)
 	{
-		Debug::ShowMessageBox(_T("GetProcAddress(\"LoadLibrary\") Failed"));
+		Debug::ShowMessageBox(_T("InjectDLL -> GetProcAddress(\"LoadLibrary\") Failed"));
 		return false;
 	}
 
 	HANDLE hProcessThread = CreateRemoteThread(hProcess, NULL, 0, (LPTHREAD_START_ROUTINE)pProc, pRemoteBuf, 0, NULL);
 
 	if (hProcessThread == NULL) {
-		Debug::ShowMessageBox(_T("CreateRemoteThread Failed"));
+		Debug::ShowMessageBox(_T("InjectDLL -> CreateRemoteThread Failed"));
 		return false;
 	}
 
@@ -91,7 +93,7 @@ VK_SENDER_EXPORT bool VK_CDECL EjectDLL(DWORD dwWndProcessId)
 	HANDLE hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwWndProcessId);
 
 	if (hProcess == NULL) {
-		Debug::ShowMessageBox(_T("OpenProcess Failed"));
+		Debug::ShowMessageBox(_T("EjectDLL -> OpenProcess Failed"));
 		return false;
 	}
 
@@ -106,14 +108,14 @@ VK_SENDER_EXPORT bool VK_CDECL EjectDLL(DWORD dwWndProcessId)
 	// 없는 경우에는 그냥 반환
 	MODULEENTRY32 moduleEntry;
 	if (!WinApiHelper::GetLoadedModule(dwWndProcessId, strModuleFileName, &moduleEntry)) {
-		Debug::ShowMessageBox(_T("HasLoadedModule : Already DirectVKSenderDLL.dll Exist"));
+		Debug::ShowMessageBox(_T("EjectDLL -> GetLoadedModule : DirectVKSenderDLL.dll doesn't Exist"));
 		return true;
 	}
 
 	HMODULE hKernelDLLModule = GetModuleHandle(_T("kernel32.dll"));
 
 	if (hKernelDLLModule == NULL) {
-		Debug::ShowMessageBox(_T("GetModuleHandle Failed"));
+		Debug::ShowMessageBox(_T("EjectDLL -> GetModuleHandle Failed"));
 		return false;
 	}
 
@@ -121,21 +123,21 @@ VK_SENDER_EXPORT bool VK_CDECL EjectDLL(DWORD dwWndProcessId)
 
 	if (pProc == NULL)
 	{
-		Debug::ShowMessageBox(_T("GetProcAddress(\"FreeLibrary\") Failed"));
+		Debug::ShowMessageBox(_T("EjectDLL -> GetProcAddress(\"FreeLibrary\") Failed"));
 		return false;
 	}
 
 	HANDLE hProcessThread = CreateRemoteThread(hProcess, NULL, 0, (LPTHREAD_START_ROUTINE)pProc, moduleEntry.modBaseAddr, 0, NULL);
 
 	if (hProcessThread == NULL) {
-		Debug::ShowMessageBox(_T("CreateRemoteThread Failed"));
+		Debug::ShowMessageBox(_T("EjectDLL -> CreateRemoteThread Failed"));
 		return false;
 	}
 
 	WaitForSingleObject(hProcessThread, INFINITE);
 
 	if (WinApiHelper::GetLoadedModule(dwWndProcessId, strModuleFileName)) {
-		Debug::ShowMessageBox(_T("DLL Ejection Failed"));
+		Debug::ShowMessageBox(_T("EjectDLL -> DLL Ejection Failed"));
 		return false;
 	}
 
