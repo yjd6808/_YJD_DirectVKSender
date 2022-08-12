@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="PrecompiledHeader.h" />
+    <ClInclude Include="Export.h" />
+    <ClInclude Include="CallingConvention.h" />
+    <ClInclude Include="AttachtedProcess.h" />
+    <ClInclude Include="Error.h" />
+    <ClInclude Include="SenderFn.h" />
+    <ClInclude Include="WinApiHelper.h" />
+    <ClInclude Include="Debug.h" />
+    <ClInclude Include="TypedefString.h" />
+    <ClInclude Include="Network\Protocol.h" />
+    <ClInclude Include="Network\IPCSocketListener.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\IPCSocket.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\IPCConfig.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\Winsock.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="PrecompiledHeader.cpp" />
+    <ClCompile Include="AttachedProcess.cpp" />
+    <ClCompile Include="SenderFn.cpp" />
+    <ClCompile Include="WinApiHelper.cpp" />
+    <ClCompile Include="Debug.cpp" />
+    <ClCompile Include="Network\Winsock.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\IPCSocketListener.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\IPCSocket.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Network">
+      <UniqueIdentifier>{2d03d679-3a42-4869-a96d-86bff7296c40}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

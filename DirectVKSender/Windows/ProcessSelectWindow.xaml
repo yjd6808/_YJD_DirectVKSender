@@ -1,0 +1,55 @@
+﻿<Window x:Class="DirectVKSender.ProcessSelectWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DirectVKSender"
+        mc:Ignorable="d"
+        Title="Process Select Window" Height="550" Width="400">
+    <Window.Resources>
+        <local:ProcessFileNameToIconConverter x:Key="ProcessFileNameToIconConverter" />
+        
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            
+            <TextBox x:Name="_searchtb" BorderBrush="Transparent" Grid.Column="0" KeyDown="_searchtb_KeyDown"/>
+            <Button Name="_searchbtn"
+                    Grid.Column="1"
+                    Click="_searchbtn_Click">검색</Button>
+            <Button Name="_refreshbtn"
+                    Grid.Column="2"
+                    Click="_refreshbtn_Click">새로고침</Button>
+        </Grid>
+        
+        <ListBox Name="_wndProcessList" SelectionChanged="_wndProcessList_SelectionChanged" Grid.Row="1" MouseDoubleClick="_wndProcessList_MouseDoubleClick">
+            <ListBox.ItemTemplate>
+                <DataTemplate >
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20"></ColumnDefinition>
+                            <ColumnDefinition Width="8"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        
+                        <Image Width="20"
+                               Height="20"
+                               Source="{Binding MainModule.FileName, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ProcessFileNameToIconConverter}}">
+                        </Image>
+                        <TextBlock Grid.Column="2" Text="{Binding ProcessName}"></TextBlock>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</Window>
